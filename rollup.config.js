@@ -7,7 +7,7 @@ import copy from 'rollup-plugin-copy';
 export default {
   entry: 'src/scripts/app.js',
   format: 'iife',
-  dest: 'ui/scripts/app.js',
+  dest: 'www/ui/scripts/app.js',
   moduleName: 'Totem',
   plugins: [
     resolve({
