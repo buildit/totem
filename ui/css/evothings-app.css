@@ -770,7 +770,6 @@ input.btn-group.black:checked + label {
 body{
 	margin:0;
 	padding:1em;
-	background-color: #212121!important;
 	color: #f5f5f5;
 }
 

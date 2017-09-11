@@ -32401,9 +32401,11 @@ var App = function () {
         _this2.onStartButton();
       });
 
-      document.getElementById('disconnect-button').addEventListener('click', function () {
-        _this2.onStopButton();
-      });
+      /*document
+        .getElementById('disconnect-button')
+        .addEventListener('click', () => {
+          this.onStopButton();
+        });*/
       this.showInfo('Activate the Microbit and tap Start.');
     }
   }, {
@@ -32492,6 +32494,8 @@ var App = function () {
 
       this.innerEmoji = "em em-" + this.emoji;
       document.getElementById('accelerometer').innerHTML = '<br><i class="' + this.innerEmoji + '"></i><p>' + unescape(this.message) + '</p>';
+      //document.getElementByTagName('body').style.backgroundColor = this.color;
+      document.body.style.background = this.color;
     }
   }, {
     key: 'handleAccelerometerValues',
@@ -32527,41 +32531,47 @@ var App = function () {
         this.totemPosition = 1;
         this.message = "work%20mode%3A%20Stopped";
         this.emoji = "raised_hand";
+        this.color = "#dddfd4";
       }
 
       if (rawZ < -850 && rawZ > -1200) {
         this.totemPosition = 2;
         this.message = "mode%3A%20Paused";
         this.emoji = "zzz";
+        this.color = "#dddfd4";
       }
 
       if (rawX > 850 && rawX < 1200) {
         this.totemPosition = 3;
         this.message = "mode%3A%20Conceptual";
         this.emoji = "cloud";
+        this.color = "#62bcfa";
       }
 
       if (rawX < -850 && rawX > -1200) {
         this.totemPosition = 4;
         this.message = "mode%3A%20Tangible";
         this.emoji = "no_entry_sign";
+        this.color = "#e62739";
       }
 
       if (rawY > 850 && rawY < 1200) {
         this.totemPosition = 5;
         this.message = "mode%3A%20getting%20shit%20done";
         this.emoji = "sweat_drops";
+        this.color = "#9068be";
       }
 
       if (rawY < -850 && rawY > -1200) {
         this.totemPosition = 6;
         this.message = "mode%3A%20Inspiration";
         this.emoji = "blossom";
+        this.color = "#6ed3cf";
       }
 
       if (this.oldTotemPosition !== this.totemPosition) {
         this.createNewStatus(this.totemPosition - 1, new Date().getTime(), 0);
-        this.changeStatus(this.message, this.emoji);
+        this.changeStatus(this.message, this.emoji, this.color);
         this.oldTotemPosition = this.totemPosition;
       }
 
