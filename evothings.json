@@ -24,7 +24,7 @@
       "version": "2.0.0"
     }
   ],
-  "index-file": "index.html",
+  "index-file": "www/index.html",
   "uuid": "8a67e0a8-572c-4eec-af31-172712285581",
   "icon": "app-icon.png",
   "doc-url": "http://evothings.com/2.2/doc/examples/microbit-sensors.html",
