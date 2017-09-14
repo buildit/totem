@@ -31,6 +31,7 @@ export default {
     }),
     copy({
       "index.html": "www/index.html",
+      "confirm.html": "www/confirm.html",
       "libs": "www/libs",
       "ui": "www/ui",
       "res": "www/res",

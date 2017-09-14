@@ -21,15 +21,16 @@
       console.log = hyper.log
     }
   </script>
-  <script src="libs/cordova.js"></script>
-  <script src="libs/evothings/evothings.js"></script>
-  <script src="libs/evothings/ui/ui.js"></script>
-  <script src="libs/evothings/easyble/easyble.js"></script>
-  <script src="libs/evothings/util/util.js"></script>
-  <script src="ui/scripts/app.js"></script>
+  <script type="text/javascript" src="libs/cordova.js"></script>
+  <script type="text/javascript" src="libs/plugins/cordova-plugin-customurlscheme/www/android/LaunchMyApp.js"></script>
+  <script type="text/javascript" src="libs/evothings/evothings.js"></script>
+  <script type="text/javascript" src="libs/evothings/ui/ui.js"></script>
+  <script type="text/javascript" src="libs/evothings/easyble/easyble.js"></script>
+  <script type="text/javascript" src="libs/evothings/util/util.js"></script>
+  <script type="text/javascript" src="ui/scripts/app.js"></script>
 </head>
 
-<body ontouchstart=""><!-- ontouchstart="" enables low-delay CSS transitions. -->
+<body ontouchstart="">
 
 <div class="totem-content">
 
@@ -46,14 +47,39 @@
     <span id="accelerometer">[Waiting]</span>
   </p>
 
-  <div id="slackbutton">
+  <div id="slack-container">
     <h4>Before starting please sign into your slack account test.</h4>
-    <a href="https://slack.com/oauth/authorize?scope=identity.basic&client_id=3360794059.221548354467"><img
-        alt="Sign in with Slack" height="40" width="172"
-        src="https://platform.slack-edge.com/img/sign_in_with_slack@2x.png"/></a>
+    <div id="slack-button">
+      <img
+          alt="Sign in with Slack" height="40" width="172"
+          src="https://platform.slack-edge.com/img/sign_in_with_slack@2x.png"/>
+    </div>
   </div>
 
 </div>
+
+<script>
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+
+  function handleOpenURL(url) {
+    if (url) {
+      var code = getParameterByName('code', url);
+
+      if (code) {
+        localStorage.setItem('totem.authCode', code);
+        window.totemApp.slackClient.getAccessToken(code);
+      }
+    }
+  }
+</script>
 
 </body>
 

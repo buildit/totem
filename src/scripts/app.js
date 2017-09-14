@@ -1,6 +1,7 @@
 import "babel-polyfill";
 import firebase from 'firebase';
 import Microbit from './microbit';
+import Slack from './slack';
 
 export default class App {
   constructor() {
@@ -8,6 +9,7 @@ export default class App {
     this.lastLog = null;
     this.totemPosition = 1;
     this.oldTotemPosition = 1;
+    this.slackClient = new Slack();
     this.microbit = new Microbit({
       ACCELEROMETER_SERVICE: 'e95d0753-251d-470a-a062-fa1922dfa9a8',
       ACCELEROMETER_DATA: 'e95dca4b-251d-470a-a062-fa1922dfa9a8',
@@ -31,11 +33,12 @@ export default class App {
 
   initialize() {
     document.addEventListener('deviceready', () => {
-      document.getElementById('slackbutton').style.display = "none";
+      document.getElementById('slack-container').style.display = 'block';
 
-      if (window.localStorage.getItem("username") === null) {
-        document.getElementById('slackbutton').style.display = "block";
+      if (window.localStorage.getItem('totem.accessToken')) {
+        document.getElementById('slack-container').style.display = 'none';
       }
+
       evothings.scriptsLoaded(this.onDeviceReady.bind(this));
     }, false);
     this.initializeFirebase();
@@ -51,7 +54,17 @@ export default class App {
       .addEventListener('click', () => {
         this.onStartButton();
       });
+
+    document
+      .getElementById('slack-button')
+      .addEventListener('click', () => {
+        this.onSlackButton();
+      });
     this.showInfo('Activate the Microbit and tap Start.');
+  }
+
+  onSlackButton() {
+    this.slackClient.authorize();
   }
 
   showInfo(info) {
@@ -64,15 +77,6 @@ export default class App {
       status: status,
       timestamp: timestamp
     });
-  }
-
-  changeStatus(message, emoji) {
-    const url = 'https://slack.com/api/users.profile.set';
-    const temp_token = 'xoxp-3360794059-3518803224-233131626928-8cdbab0f8c3359eff31d69cc2e72b186';
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', url, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    xhr.send(`token=xoxp-3360794059-3518803224-233838040384-4d0af36f2f27b88e0303c6b720e4199a&profile=%7B%22status_text%22%3A%22${message}%22%2C%22status_emoji%22%3A%22%3A${emoji}%3A%22%7D`);
   }
 
   onStartButton() {
@@ -201,7 +205,7 @@ export default class App {
 
     if (this.oldTotemPosition !== this.totemPosition) {
       this.createNewStatus(this.totemPosition - 1, new Date().getTime(), 0);
-      this.changeStatus(this.message, this.emoji);
+      this.slackClient.updateStatus(this.message, this.emoji);
       this.oldTotemPosition = this.totemPosition;
     }
 
@@ -215,3 +219,4 @@ export default class App {
 
 const app = new App();
 app.initialize();
+window.totemApp = app;

@@ -32,6 +32,14 @@ module.exports = [
         "clobbers": [
             "cordovaFetch"
         ]
+    },
+    {
+        "id": "cordova-plugin-customurlscheme.LaunchMyApp",
+        "file": "plugins/cordova-plugin-customurlscheme/www/android/LaunchMyApp.js",
+        "pluginId": "cordova-plugin-customurlscheme",
+        "clobbers": [
+            "window.plugins.launchmyapp"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -42,7 +50,8 @@ module.exports.metadata =
     "cordova-plugin-console": "1.0.7",
     "cordova-plugin-inappbrowser": "1.7.1",
     "cordova-plugin-ble": "2.0.1",
-    "cordova-plugin-fetch": "0.1.0"
+    "cordova-plugin-fetch": "0.1.0",
+    "cordova-plugin-customurlscheme": "4.3.0"
 };
 // BOTTOM OF METADATA
 });

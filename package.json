@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "npm run start",
-    "start": "nodemon --exec \"npm run build \" --watch src --watch ui --watch index.html --ignore ui/scripts/app.js",
+    "start": "nodemon --exec \"npm run build \" --watch src --watch ui --watch index.html --watch confirm.html --ignore ui/scripts/app.js",
     "test": "jest"
   },
   "devDependencies": {
