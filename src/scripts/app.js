@@ -139,7 +139,8 @@ export default class App {
   }
 
   updateImage() {
-    document.getElementById('accelerometer').innerHTML = `<br><i class="em em-${this.emoji}"></i><p>${this.message}</p>`;
+    document.body.style.background = this.color;
+    document.getElementById('change-status').innerHTML = `<br><img src="${this.image}"><p class="message">${this.message}</p>`;
   }
 
   handleAccelerometerValues(data) {
@@ -169,43 +170,56 @@ export default class App {
     // TODO - check why the totemPosition is confused when dropping the microbit
     if (rawZ > 850 && rawZ < 1200) {
       this.totemPosition = 1;
-      this.message = 'mode: Stopped';
+      this.message = 'Paused';
       this.emoji = 'raised_hand';
+      this.image = 'res/slack-totem-icons/totem-pause-emoji.png';
+      this.color = '#ffffff';
     }
 
     if (rawZ < -850 && rawZ > -1200) {
       this.totemPosition = 2;
-      this.message = 'mode: Paused';
+      this.message = 'Paused';
       this.emoji = 'zzz';
+      this.color = '#dddfd4';
+      this.image = 'res/slack-totem-icons/totem-pause-emoji.png';
     }
 
     if (rawX > 850 && rawX < 1200) {
       this.totemPosition = 3;
       this.message = 'mode: Conceptual';
       this.emoji = 'cloud';
+      this.message = 'Deep cognitive work';
+      this.color = '#33cccc';
+      this.image = 'res/slack-totem-icons/totem-thought-emoji.png';
     }
 
     if (rawX < -850 && rawX > -1200) {
       this.totemPosition = 4;
-      this.message = 'mode: Tangible';
+      this.message = 'Tangible work';
       this.emoji = 'no_entry_sign';
+      this.image = 'res/slack-totem-icons/totem-deep-emoji.png';
+      this.color = '#ff6666';
     }
 
     if (rawY > 850 && rawY < 1200) {
       this.totemPosition = 5;
-      this.message = 'mode: getting shit done';
+      this.message = 'Get stuff done';
       this.emoji = 'sweat_drops';
+      this.image = 'res/slack-totem-icons/totem-work-emoji.png';
+      this.color = '#6666ff';
     }
 
     if (rawY < -850 && rawY > -1200) {
       this.totemPosition = 6;
-      this.message = 'mode: Inspiration';
-      this.emoji = 'blossom';
+      this.message = 'Work with others';
+      this.emoji = 'totem-talk-emoji';
+      this.image = 'res/slack-totem-icons/totem-talk-emoji.png';
+      this.color = '#ffcc00';
     }
 
     if (this.oldTotemPosition !== this.totemPosition) {
       this.createNewStatus(this.totemPosition - 1, new Date().getTime(), 0);
-      this.slackClient.updateStatus(this.message, this.emoji);
+      this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
       this.oldTotemPosition = this.totemPosition;
     }
 
