@@ -6,7 +6,7 @@ export default class Slack {
       client_id: '3360794059.221548354467',
       client_secret: '2942f6d254a6321cbf469ee9e69a8bf3',
       scope: 'identity.basic',
-      redirect_uri: 'http://microbits-totem-staging.s3-website-eu-west-1.amazonaws.com/confirm.html',
+      redirect_uri: 'http://microbits-totem.s3-website-eu-west-1.amazonaws.com/confirm.html',
       team_id: 'T03ALPC1R',
       access_token: window.localStorage.getItem('totem.accessToken') || ''
     };
