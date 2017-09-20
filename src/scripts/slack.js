@@ -57,6 +57,7 @@ export default class Slack {
         if (res.access_token) {
           this.config.access_token = res.access_token;
           window.localStorage.setItem('totem.accessToken', res.access_token);
+          window.localStorage.setItem('totem.user', JSON.stringify(res.user));
           document.getElementById('slack-container').style.display = 'none';
         }
       })

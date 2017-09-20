@@ -1,7 +1,10 @@
 import "babel-polyfill";
 import firebase from 'firebase';
+import moment from 'moment';
 import Microbit from './microbit';
 import Slack from './slack';
+import { debounce } from './utils';
+import Rx from 'rxjs';
 
 export default class App {
   constructor() {
@@ -9,6 +12,7 @@ export default class App {
     this.lastLog = null;
     this.totemPosition = 1;
     this.oldTotemPosition = 1;
+    this.userId = '';
     this.slackClient = new Slack();
     this.microbit = new Microbit({
       ACCELEROMETER_SERVICE: 'e95d0753-251d-470a-a062-fa1922dfa9a8',
@@ -33,11 +37,21 @@ export default class App {
 
   initialize() {
     document.addEventListener('deviceready', () => {
+      const user = JSON.parse(window.localStorage.getItem('totem.user'));
+
       document.getElementById('slack-container').style.display = 'block';
+      document.getElementById('slack-logged-in').style.display = 'none';
 
       if (window.localStorage.getItem('totem.accessToken')) {
         document.getElementById('slack-container').style.display = 'none';
       }
+
+      if (user) {
+        this.userId = user.id;
+        document.getElementById('username').innerHTML = user.name;
+        document.getElementById('slack-logged-in').style.display = 'block';
+      }
+
 
       evothings.scriptsLoaded(this.onDeviceReady.bind(this));
     }, false);
@@ -72,8 +86,15 @@ export default class App {
     return this;
   }
 
-  createNewStatus(status, timestamp, userId) {
-    firebase.database().ref('user-status/' + userId + "/").push({
+  createNewStatus(status, timestamp, id = '') {
+    let slackUser = null;
+
+    if (!id) {
+      slackUser = JSON.parse(window.localStorage.getItem('totem.user'));
+      id = slackUser.id;
+    }
+
+    firebase.database().ref('user-status/' + id + "/").push({
       status: status,
       timestamp: timestamp
     });
@@ -171,15 +192,15 @@ export default class App {
     if (rawZ > 850 && rawZ < 1200) {
       this.totemPosition = 1;
       this.message = 'Paused';
-      this.emoji = 'raised_hand';
+      this.emoji = 'totem-pause';
       this.image = 'res/slack-totem-icons/totem-pause-emoji.png';
-      this.color = '#ffffff';
+      this.color = '#dddfd4';
     }
 
     if (rawZ < -850 && rawZ > -1200) {
       this.totemPosition = 2;
       this.message = 'Paused';
-      this.emoji = 'zzz';
+      this.emoji = 'totem-pause';
       this.color = '#dddfd4';
       this.image = 'res/slack-totem-icons/totem-pause-emoji.png';
     }
@@ -187,7 +208,7 @@ export default class App {
     if (rawX > 850 && rawX < 1200) {
       this.totemPosition = 3;
       this.message = 'mode: Conceptual';
-      this.emoji = 'cloud';
+      this.emoji = 'totem-deep-cog';
       this.message = 'Deep cognitive work';
       this.color = '#33cccc';
       this.image = 'res/slack-totem-icons/totem-thought-emoji.png';
@@ -196,7 +217,7 @@ export default class App {
     if (rawX < -850 && rawX > -1200) {
       this.totemPosition = 4;
       this.message = 'Tangible work';
-      this.emoji = 'no_entry_sign';
+      this.emoji = 'totem-deep-work';
       this.image = 'res/slack-totem-icons/totem-deep-emoji.png';
       this.color = '#ff6666';
     }
@@ -204,7 +225,7 @@ export default class App {
     if (rawY > 850 && rawY < 1200) {
       this.totemPosition = 5;
       this.message = 'Get stuff done';
-      this.emoji = 'sweat_drops';
+      this.emoji = 'totem-stuff';
       this.image = 'res/slack-totem-icons/totem-work-emoji.png';
       this.color = '#6666ff';
     }
@@ -212,15 +233,15 @@ export default class App {
     if (rawY < -850 && rawY > -1200) {
       this.totemPosition = 6;
       this.message = 'Work with others';
-      this.emoji = 'totem-talk-emoji';
+      this.emoji = 'totem-collaborate';
       this.image = 'res/slack-totem-icons/totem-talk-emoji.png';
       this.color = '#ffcc00';
     }
 
     if (this.oldTotemPosition !== this.totemPosition) {
-      this.createNewStatus(this.totemPosition - 1, new Date().getTime(), 0);
-      this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
       this.oldTotemPosition = this.totemPosition;
+      this.createNewStatus(this.totemPosition - 1, new Date().getTime(), this.userId);
+      this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
     }
 
     // log raw values every now and then

@@ -70,7 +70,8 @@ export default class Microbit {
         callback,
         (errorCode) => {
 
-        });
+        }
+      );
       resolve(device);
     });
   }
