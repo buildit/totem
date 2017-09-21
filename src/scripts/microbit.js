@@ -1,3 +1,5 @@
+import Rx from 'rxjs';
+
 export default class Microbit {
   constructor(config) {
     this.config = config;
@@ -52,7 +54,7 @@ export default class Microbit {
     });
   }
 
-  startNotifications(device, callback) {
+  startNotifications(device) {
     return new Promise((resolve, reject) => {
       // Due to https://github.com/evothings/cordova-ble/issues/30
       // ... we have to do double work to make it function properly
@@ -65,14 +67,18 @@ export default class Microbit {
       // Set sensor period to 160 ms.
       const periodDataBuffer = new ArrayBuffer(2);
       new DataView(periodDataBuffer).setUint16(0, 500, true);
-      device.enableNotification(
-        this.config.ACCELEROMETER_DATA,
-        callback,
-        (errorCode) => {
+      const getDeviceNotification = () =>
+        Rx.Observable.create(
+          observer => {
+            device.enableNotification(
+              this.config.ACCELEROMETER_DATA,
+              (data) => observer.next(data),
+              (error) => observer.error(error)
+            )
+          }
+        );
 
-        }
-      );
-      resolve(device);
+      resolve(getDeviceNotification);
     });
   }
 

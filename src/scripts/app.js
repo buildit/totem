@@ -143,10 +143,37 @@ export default class App {
       })
       .then(device => {
         this.showInfo('Starting notifications...');
-        return this.microbit.startNotifications(device, this.handleAccelerometerValues.bind(this));
+        return this.microbit.startNotifications(device);
       })
-      .then(() => {
+      .then(sourceObservable => {
         this.showInfo('Setup complete. Receiving data...');
+
+        const subject = new Rx.Subject();
+        const multicasted = sourceObservable().multicast(subject);
+
+        multicasted
+          .delay(500)
+          .catch(e => console.log(e))
+          .subscribe({
+            next: (data) => {
+              this.handleAccelerometerValues(data);
+            }
+          });
+
+        multicasted
+          .throttleTime(5000)
+          .catch(e => console.log(e))
+          .subscribe({
+            next: () => {
+              if (this.oldTotemPosition !== this.totemPosition) {
+                this.oldTotemPosition = this.totemPosition;
+                this.createNewStatus(this.totemPosition - 1, new Date().getTime(), this.userId);
+                this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
+              }
+            }
+          });
+
+        multicasted.connect();
       })
       .catch(err => {
         this.showInfo(`Error: ${err}.`);
@@ -167,12 +194,7 @@ export default class App {
   handleAccelerometerValues(data) {
     // TODO - remove status update from parseAccelerometerValues function
     this.parseAccelerometerValues(new Uint8Array(data));
-    const now = new Date().getTime();
-
-    if (!this.lastLog || now > this.lastLog + 1000) {
-      this.lastLog = now;
-      this.updateImage();
-    }
+    this.updateImage();
   }
 
   /**
@@ -236,18 +258,6 @@ export default class App {
       this.emoji = 'totem-collaborate';
       this.image = 'res/slack-totem-icons/totem-talk-emoji.png';
       this.color = '#ffcc00';
-    }
-
-    if (this.oldTotemPosition !== this.totemPosition) {
-      this.oldTotemPosition = this.totemPosition;
-      this.createNewStatus(this.totemPosition - 1, new Date().getTime(), this.userId);
-      this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
-    }
-
-    // log raw values every now and then
-    const now = new Date().getTime();
-    if (!this.lastLog || now > this.lastLog + 3000) {
-      this.lastLog = now;
     }
   }
 }
