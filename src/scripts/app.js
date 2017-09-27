@@ -213,10 +213,10 @@ export default class App {
     // TODO - check why the totemPosition is confused when dropping the microbit
     if (rawZ > 850 && rawZ < 1200) {
       this.totemPosition = 1;
-      this.message = 'Paused';
-      this.emoji = 'totem-pause';
-      this.image = 'res/slack-totem-icons/totem-pause-emoji.png';
+      this.message = 'Stopped';
+      this.emoji = 'zzz';
       this.color = '#dddfd4';
+      this.image = 'res/slack-totem-icons/totem-stop-emoji.png';
     }
 
     if (rawZ < -850 && rawZ > -1200) {
@@ -229,35 +229,34 @@ export default class App {
 
     if (rawX > 850 && rawX < 1200) {
       this.totemPosition = 3;
-      this.message = 'mode: Conceptual';
+      this.message = 'Deep\ncognitive\nwork';
       this.emoji = 'totem-deep-cog';
-      this.message = 'Deep cognitive work';
       this.color = '#33cccc';
       this.image = 'res/slack-totem-icons/totem-thought-emoji.png';
     }
 
     if (rawX < -850 && rawX > -1200) {
       this.totemPosition = 4;
-      this.message = 'Tangible work';
+      this.message = 'Tangible\nwork';
       this.emoji = 'totem-deep-work';
-      this.image = 'res/slack-totem-icons/totem-deep-emoji.png';
       this.color = '#ff6666';
+      this.image = 'res/slack-totem-icons/totem-deep-emoji.png';
     }
 
     if (rawY > 850 && rawY < 1200) {
       this.totemPosition = 5;
       this.message = 'Get stuff done';
       this.emoji = 'totem-stuff';
-      this.image = 'res/slack-totem-icons/totem-work-emoji.png';
       this.color = '#6666ff';
+      this.image = 'res/slack-totem-icons/totem-work-emoji.png';
     }
 
     if (rawY < -850 && rawY > -1200) {
       this.totemPosition = 6;
       this.message = 'Work with others';
       this.emoji = 'totem-collaborate';
-      this.image = 'res/slack-totem-icons/totem-talk-emoji.png';
       this.color = '#ffcc00';
+      this.image = 'res/slack-totem-icons/totem-talk-emoji.png';
     }
   }
 }
