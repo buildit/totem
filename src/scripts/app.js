@@ -1,9 +1,7 @@
 import "babel-polyfill";
 import firebase from 'firebase';
-import moment from 'moment';
 import Microbit from './microbit';
 import Slack from './slack';
-import { debounce } from './utils';
 import Rx from 'rxjs';
 
 export default class App {
@@ -117,7 +115,7 @@ export default class App {
 
   startConnectTimer() {
     this.connectTimer = setTimeout(() => {
-        this.showInfo('Scanning...\nPlease start the Microbit.');
+        this.showInfo('Scanning...<br />Please start the Microbit.');
       },
       this.CONNECT_TIMEOUT);
     return this;
@@ -229,7 +227,7 @@ export default class App {
 
     if (rawX > 850 && rawX < 1200) {
       this.totemPosition = 3;
-      this.message = 'Deep\ncognitive\nwork';
+      this.message = 'Deep<br />cognitive<br />work';
       this.emoji = 'totem-deep-cog';
       this.color = '#33cccc';
       this.image = 'res/slack-totem-icons/totem-thought-emoji.png';
@@ -237,7 +235,7 @@ export default class App {
 
     if (rawX < -850 && rawX > -1200) {
       this.totemPosition = 4;
-      this.message = 'Tangible\nwork';
+      this.message = 'Tangible<br />work';
       this.emoji = 'totem-deep-work';
       this.color = '#ff6666';
       this.image = 'res/slack-totem-icons/totem-deep-emoji.png';

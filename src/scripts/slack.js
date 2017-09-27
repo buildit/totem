@@ -59,6 +59,8 @@ export default class Slack {
           window.localStorage.setItem('totem.accessToken', res.access_token);
           window.localStorage.setItem('totem.user', JSON.stringify(res.user));
           document.getElementById('slack-container').style.display = 'none';
+          document.getElementById('username').innerHTML = res.user.name;
+          document.getElementById('slack-logged-in').style.display = 'block';
         }
       })
       .catch(err => {
