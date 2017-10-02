@@ -7,10 +7,11 @@ import Rx from 'rxjs';
 export default class App {
   constructor() {
     this.CONNECT_TIMEOUT = 5000;
-    this.lastLog = null;
     this.totemPosition = 1;
     this.oldTotemPosition = 1;
     this.userId = '';
+    this.user = null;
+    this.updateSlackStatus = false;
     this.slackClient = new Slack();
     this.microbit = new Microbit({
       ACCELEROMETER_SERVICE: 'e95d0753-251d-470a-a062-fa1922dfa9a8',
@@ -46,7 +47,8 @@ export default class App {
 
       if (user) {
         this.userId = user.id;
-        document.getElementById('username').innerHTML = user.name;
+        this.user = user;
+        document.getElementById('username').innerHTML = `${this.user.name} (${this.user.id})`;
         document.getElementById('slack-logged-in').style.display = 'block';
       }
 
@@ -151,7 +153,10 @@ export default class App {
 
         multicasted
           .delay(500)
-          .catch(e => console.log(e))
+          .catch(e => {
+            console.log(e);
+            this.showInfo(`Error: ${e}.`);
+          })
           .subscribe({
             next: (data) => {
               this.handleAccelerometerValues(data);
@@ -163,10 +168,14 @@ export default class App {
           .catch(e => console.log(e))
           .subscribe({
             next: () => {
-              if (this.oldTotemPosition !== this.totemPosition) {
+              if ((this.oldTotemPosition !== this.totemPosition) || this.updateSlackStatus) {
                 this.oldTotemPosition = this.totemPosition;
+                this.updateSlackStatus = false;
                 this.createNewStatus(this.totemPosition - 1, new Date().getTime(), this.userId);
-                this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
+
+                if (this.user.id) {
+                  this.slackClient.updateStatus(this.message, this.emoji, this.color, this.image);
+                }
               }
             }
           });
@@ -192,7 +201,11 @@ export default class App {
   handleAccelerometerValues(data) {
     // TODO - remove status update from parseAccelerometerValues function
     this.parseAccelerometerValues(new Uint8Array(data));
-    this.updateImage();
+    if (this.oldTotemPosition !== this.totemPosition) {
+      this.oldTotemPosition = this.totemPosition;
+      this.updateSlackStatus = true;
+      this.updateImage();
+    }
   }
 
   /**

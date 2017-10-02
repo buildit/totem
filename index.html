@@ -15,6 +15,8 @@
 
   <link rel="shortcut icon" href="res/favicon.ico" type="image/x-icon">
   <link rel="icon" href="res/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="ui/css/material.min.css" rel="stylesheet" />
   <link href="ui/css/emoji.css" rel="stylesheet" />
 
   <script>
@@ -29,6 +31,7 @@
   <script type="text/javascript" src="libs/evothings/ui/ui.js"></script>
   <script type="text/javascript" src="libs/evothings/easyble/easyble.js"></script>
   <script type="text/javascript" src="libs/evothings/util/util.js"></script>
+  <script type="text/javascript" src="ui/scripts/material.min.js"></script>
   <script type="text/javascript" src="ui/scripts/app.js"></script>
 </head>
 
@@ -40,7 +43,7 @@
     <strong>Logged in as:</strong> <span id="username"></span>
   </p>
 
-  <button id="connect-button" class="grey">
+  <button id="connect-button" class="connect-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
     Connect
   </button>
 
@@ -51,11 +54,11 @@
 	<p>
 		<span id="accelerometer"></span>
 	</p>
-      
+
   <div id="change-status"></div>
 
   <div id="slack-container">
-    <h4>Before starting please sign into your slack account test.</h4>
+    <h4>Before starting please sign into your slack account to test.</h4>
     <div id="slack-button">
       <img
           alt="Sign in with Slack" height="40" width="172"
